@@ -1,0 +1,55 @@
+START
+
+baseFee = 5
+fee2 = .03
+fee3 = .02
+tax = .14
+totalDue = 0
+past100 = FALSE
+past300 = FALSE
+userInput = null
+
+INPUT areaCode
+INPUT telNum
+INPUT totalTexts
+
+IF totalTexts <= 100 THEN
+	totalDue = baseFee * tax
+	OUTPUT "Total Due w/ Tax: " + totalDue
+ELSE IF totalTexts <= 300 THEN
+	past100 = TRUE
+	A1 = (totalTexts - 100)
+	totalDue = ((fee2 * A1) + baseFee) * tax
+	OUTPUT "Total Due w/ Tax: " + totalDue
+ELSE IF totalTexts > 300 THEN
+	past100 = TRUE
+	past300 = TRUE
+	A1 = (totalTexts - 300)
+	A2 = fee2 * 200
+	totalDue = ((A1 * fee3) + 5 + A2) * tax
+	OUTPUT "Total Due w/ Tax: " + totalDue
+END IF
+
+OUTPUT "Program will now continue to capture number of texts. Type 'quit' to quit."
+
+WHILE userInput != "quit"
+	IF text is received THEN
+		totalTexts += 1
+		IF !past100 AND totalTexts > 100 THEN
+			past100 = TRUE
+		ENDIF
+		IF !past300 AND totalTexts > 300 THEN
+			past300 = TRUE
+		ENDIF
+
+		IF past100 AND past300 THEN
+			totalDue += fee3
+		ELSE IF past100 THEN
+			totalDue += fee2
+		ENDIF
+		
+		IF totalTexts > 100 AND totalDue > 10 THEN
+			OUTPUT "Total Due w/ Tax: " + totalDue
+		ENDIF
+	ENDIF
+ENDWHILE
